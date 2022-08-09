@@ -9,5 +9,6 @@ const awsConfig = {
 };
 
 const SES = new AWS.SES(awsConfig);
+const S3 = new AWS.S3(awsConfig);
 
-module.exports = SES;
+module.exports = { SES, S3 };
