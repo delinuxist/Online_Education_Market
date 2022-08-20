@@ -4,7 +4,10 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const dev = process.env.NODE_ENV !== "production";
 
-const app = next({ dev });
+const hostname = "localhost";
+const port = 3000;
+
+const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
 app
@@ -14,7 +17,7 @@ app
     // apply proxy in dev mode
     if (dev) {
       server.use(
-        "/api",
+        "/server",
         createProxyMiddleware({
           target: "http://localhost:5000",
           changeOrigin: true,
