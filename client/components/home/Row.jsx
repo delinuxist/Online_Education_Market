@@ -12,8 +12,6 @@ const Row = ({ courses, title, Category, rowId }) => {
     slider.scrollLeft = slider.scrollLeft + 500;
   };
 
-  console.log(courses);
-
   return (
     <div className="relative flex items-center group">
       {courses.length > 0 && (
