@@ -1,4 +1,4 @@
-import { COURSE, LOGIN, LOGOUT, OPEN } from "./types";
+import { COURSE, CURRENT, LOGIN, LOGOUT } from "./types";
 
 const rootReducer = (state, action) => {
   switch (action.type) {
@@ -6,8 +6,8 @@ const rootReducer = (state, action) => {
       return { ...state, user: action.payload };
     case LOGOUT:
       return { ...state, user: null };
-    case OPEN:
-      return { ...state, open: action.payload };
+    case CURRENT:
+      return { ...state, currentLesson: action.payload };
     default:
       return state;
   }
