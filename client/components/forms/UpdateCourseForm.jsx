@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { BsCloudUploadFill } from "react-icons/bs";
 import { AiTwotoneDelete } from "react-icons/ai";
+import { Switch } from "@headlessui/react";
 
 const UpdateCourseForm = ({
   handleChange,
@@ -11,6 +12,7 @@ const UpdateCourseForm = ({
   handleImage,
   handleSubmit,
   loading,
+  setValues,
 }) => {
   return (
     <form>
@@ -56,14 +58,39 @@ const UpdateCourseForm = ({
           </div>
         )}
       </div>
-      <input
-        className="w-full px-2 py-2 mb-3 border rounded-lg outline-none border-slate-900"
-        type="text"
-        name="category"
-        placeholder="Course Category"
-        onChange={handleChange}
-        value={values?.category}
-      />
+      <div className="flex items-center justify-between">
+        <div className=" w-[30rem]">
+          <input
+            className="w-full px-2 py-2 mb-3 border rounded-lg outline-none border-slate-900"
+            type="text"
+            name="category"
+            placeholder="Course Category"
+            onChange={handleChange}
+            value={values.category}
+          />
+        </div>
+
+        <div className="flex items-center ">
+          <span className="ml-3 mr-3">Set Upcoming</span>
+          <Switch
+            checked={values.upcoming}
+            onChange={() =>
+              setValues({
+                ...values,
+                upcoming: !values.upcoming,
+              })
+            }
+            className={`${values.upcoming ? "bg-[#5BC0BE]" : "bg-teal-700"}
+              relative inline-flex h-[30px] w-[63px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+          >
+            <span
+              aria-hidden="true"
+              className={`${values.upcoming ? "translate-x-8" : "translate-x-0"}
+            pointer-events-none inline-block h-[26px] w-[26px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+            />
+          </Switch>
+        </div>
+      </div>
       <div className="flex items-center justify-center w-32 h-32 mb-5 rounded-lg shadow-xl group ring-1">
         {preview ? (
           <div className="relative h-full">
