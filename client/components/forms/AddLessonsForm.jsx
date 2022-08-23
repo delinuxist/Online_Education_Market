@@ -35,6 +35,16 @@ const AddLessonsForm = ({
           value={values.content}
           onChange={handleLesson}
         ></textarea>
+        <div>
+          <label>Number of Questions For Lesson: </label>
+          <input
+            className="w-[5rem] px-2 py-2 mb-3 border rounded-lg outline-none"
+            type="number"
+            name="numberOfQuestions"
+            value={values.numberOfQuestions}
+            onChange={handleLesson}
+          />
+        </div>
         {preview && (
           <div className="flex justify-center">
             <div className=" group w-72 shadow-2xl h-[7rem] rounded-lg relative">
@@ -59,8 +69,8 @@ const AddLessonsForm = ({
             </div>
           </div>
         )}
-        <div className="mt-3 ">
-          <label className="px-4 py-2 mt-3 border rounded-lg cursor-pointer">
+        <div className="mt-3 text-center ">
+          <label className="px-4 py-2 mt-3 text-center border rounded-lg cursor-pointer">
             {uploadName}
             <input
               type="file"
