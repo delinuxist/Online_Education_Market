@@ -106,7 +106,7 @@ exports.currentUser = async (req, res) => {
   const user = await User.findById(req.user.userId).select("-password").exec();
 
   res.status(StatusCodes.OK).json({
-    authenticated: true,
+    success: true,
   });
 };
 
