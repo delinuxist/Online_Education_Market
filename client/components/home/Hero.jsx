@@ -37,10 +37,10 @@ const Hero = () => {
             src="https://res.cloudinary.com/delinuxist/image/upload/v1660826259/annie-spratt-QckxruozjRg-unsplash_fdkeky.jpg"
             alt="herobg"
           />
-          <img
+          {/* <img
             src="https://res.cloudinary.com/delinuxist/image/upload/v1660826224/annie-spratt-xKJUnFwfz3s-unsplash_qnjfwd.jpg"
             alt="..."
-          />
+          /> */}
           <img
             src="https://res.cloudinary.com/delinuxist/image/upload/v1660848359/boy-6680407_1920_syj3s8.jpg"
             alt="..."
