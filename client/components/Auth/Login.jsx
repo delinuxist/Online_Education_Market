@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -11,6 +11,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const inputRef = useRef();
 
   // router
   const router = useRouter();
@@ -59,6 +60,11 @@ const Login = () => {
     }
   };
 
+  //focus cursor on email input
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
+
   return (
     <section className="flex items-center justify-center w-screen h-screen ">
       <form
@@ -72,6 +78,7 @@ const Login = () => {
           <div className="mb-8">
             <p className="mb-2 text-gray-500 text-md">Email</p>
             <input
+              ref={inputRef}
               type="email"
               values={email}
               className="w-full px-2 py-2 border border-gray-300 rounded-md"
