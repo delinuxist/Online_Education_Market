@@ -53,7 +53,7 @@ const UserSidebar = () => {
           </a>
         </Link>
         {/* second */}
-        <div
+        {/* <div
           className={`flex items-center mb-5 rounded-md cursor-pointer gap-x-4 gap-y-4 hover:bg-white hover:text-black ${
             current === "/payment" && "bg-white text-black"
           }`}
@@ -68,7 +68,7 @@ const UserSidebar = () => {
           >
             Payment
           </h1>
-        </div>
+        </div> */}
         {/* third */}
         <Link href={"/music"}>
           <a
