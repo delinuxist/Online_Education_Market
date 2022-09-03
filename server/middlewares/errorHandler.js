@@ -8,9 +8,14 @@ const errorHandler = (err, req, res, next) => {
   };
 
   // Duplicate email error handler
-  if (err && err.code === 11000) {
+  if (err.code && err.code === 11000) {
     (customErr.statusCode = StatusCodes.BAD_REQUEST),
       (customErr.msg = `Duplicate emails please try again...`);
+  }
+
+  // Message not sent aws error handler
+  if (err.code && err.code === "MessageRejected") {
+    customErr.msg = "Email Address not verified...";
   }
 
   res.status(customErr.statusCode).json({
