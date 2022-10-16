@@ -4,7 +4,7 @@ import { AiOutlineRight } from "react-icons/ai";
 import { MdOutlineDashboard } from "react-icons/md";
 import { RiSecurePaymentFill } from "react-icons/ri";
 import { FaMusic } from "react-icons/fa";
-import { IoGameControllerOutline } from "react-icons/io5";
+import { IoGameControllerOutline, IoSettings } from "react-icons/io5";
 
 const UserSidebar = () => {
   const [current, setCurrent] = useState("");
@@ -89,7 +89,7 @@ const UserSidebar = () => {
           </a>
         </Link>
         {/* Game */}
-        <Link href={"/games"}>
+        {/* <Link href={"/games"}>
           <a
             className={`flex items-center mb-5 rounded-md cursor-pointer gap-x-4 gap-y-4 hover:bg-white hover:text-black ${
               current === "/games" && "bg-white text-black"
@@ -104,6 +104,28 @@ const UserSidebar = () => {
               }`}
             >
               Games
+            </h1>
+          </a>
+        </Link> */}
+        {/* Settings */}
+        <Link href={"/user/settings"}>
+          <a
+            className={`flex items-center mb-5 rounded-md cursor-pointer gap-x-4 gap-y-4 hover:bg-white hover:text-black ${
+              (current === "/user/settings" ||
+                current === "/user/settings/account" ||
+                current === "/user/settings/password") &&
+              "bg-white text-black"
+            }`}
+          >
+            <div className={`cursor-pointer duration-500 p-1`}>
+              <IoSettings size={30} />
+            </div>
+            <h1
+              className={` origin-left font-medium text-xl duration-300 ${
+                !open && "scale-0"
+              }`}
+            >
+              Settings
             </h1>
           </a>
         </Link>
