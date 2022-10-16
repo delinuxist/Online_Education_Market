@@ -154,5 +154,6 @@ exports.verifyCallback = async (req, res) => {
 
 // verify payment webhook
 exports.verifyPayment = async (req, res) => {
+  console.log("payed");
   res.status(StatusCodes.OK).json({ status: "ok" });
 };
