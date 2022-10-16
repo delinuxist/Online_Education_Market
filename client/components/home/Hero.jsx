@@ -50,7 +50,7 @@ const Hero = () => {
             alt="..."
           />
         </Carousel>
-        <div className="absolute top-0 w-full h-full bg-black/40" />
+        <div className="absolute top-0 w-full h-full bg-black/50" />
         <div className="absolute pt-[5rem] top-0 w-full h-full">
           <div className="px-24 py-28">
             <h1 className="font-bold text-8xl tracking-wide bg-gradient-to-r from-[#5BC0BE] to-slate-600 bg-clip-text text-transparent ">
