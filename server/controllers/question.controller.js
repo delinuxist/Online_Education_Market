@@ -1,4 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
+const CompletedTest = require("../models/completedTest");
 const Course = require("../models/course");
 const Question = require("../models/question");
 
@@ -101,14 +102,106 @@ exports.doneAdding = async (req, res) => {
 };
 
 exports.completedTest = async (req, res) => {
-  const { lessonId } = req.params;
+  const { lessonId, courseId } = req.params;
   const { score } = req.body;
 
-  const question = await Question.findOneAndUpdate(
-    { lessonId: lessonId },
+  const isExisting = await CompletedTest.findOne({
+    user: req.user.userId,
+    course: courseId,
+  });
+
+  if (isExisting) {
+    const isIn = await CompletedTest.findOne({
+      "lessons.lessonId": lessonId,
+    });
+
+    if (isIn) {
+      //update
+      const update = await CompletedTest.updateOne(
+        {
+          "lessons.lessonId": lessonId,
+        },
+        {
+          $set: {
+            "lessons.$.score": score,
+            "lessons.$.completed": true,
+          },
+        },
+        { new: true }
+      ).exec();
+      res.status(StatusCodes.OK).json({
+        success: true,
+      });
+    } else {
+      const update = await CompletedTest.findOneAndUpdate(
+        {
+          user: req.user.userId,
+          course: courseId,
+        },
+        {
+          $push: {
+            lessons: {
+              lessonId: lessonId,
+              completed: true,
+              score: score,
+              note: "",
+            },
+          },
+        }
+      );
+
+      res.status(StatusCodes.CREATED).json({
+        success: true,
+      });
+    }
+  } else {
+    //create
+    const created = await new CompletedTest({
+      user: req.user.userId,
+      course: courseId,
+      lessons: {
+        lessonId: lessonId,
+        completed: true,
+        score: score,
+        note: "",
+      },
+    }).save();
+
+    res.status(StatusCodes.CREATED).json({
+      success: true,
+    });
+  }
+};
+
+// get completed tests
+exports.getCompletedTest = async (req, res) => {
+  const { courseId } = req.body;
+
+  const completedTests = await CompletedTest.findOne({
+    user: req.user.userId,
+    course: courseId,
+  });
+
+  if (completedTests) {
+    res.status(StatusCodes.OK).json({
+      completedTests: completedTests?.lessons,
+    });
+  }
+};
+
+// Retake Test method
+exports.retakeTest = async (req, res) => {
+  const { lessonId } = req.params;
+
+  const question = await CompletedTest.updateOne(
     {
-      completedTest: true,
-      score: score,
+      "lessons.lessonId": lessonId,
+    },
+    {
+      $set: {
+        "lessons.$.score": 0,
+        "lessons.$.completed": false,
+      },
     },
     { new: true }
   );
@@ -120,21 +213,74 @@ exports.completedTest = async (req, res) => {
   }
 };
 
-exports.retakeTest = async (req, res) => {
-  const { lessonId } = req.params;
+// save Note
+exports.saveNote = async (req, res) => {
+  const { lessonId, courseId } = req.params;
+  const { note } = req.body;
 
-  const question = await Question.findOneAndUpdate(
-    { lessonId: lessonId },
-    {
-      completedTest: false,
-      score: 0,
-    },
-    { new: true }
-  );
+  const isExisting = await CompletedTest.findOne({
+    user: req.user.userId,
+    course: courseId,
+  });
 
-  if (question) {
-    res.status(StatusCodes.OK).json({
-      status: "success",
+  if (isExisting) {
+    const isIn = await CompletedTest.findOne({
+      "lessons.lessonId": lessonId,
+    });
+
+    if (isIn) {
+      //update
+      const update = await CompletedTest.updateOne(
+        {
+          "lessons.lessonId": lessonId,
+        },
+        {
+          $set: {
+            "lessons.$.note": note,
+          },
+        },
+        { new: true }
+      ).exec();
+      res.status(StatusCodes.OK).json({
+        success: true,
+      });
+    } else {
+      const update = await CompletedTest.findOneAndUpdate(
+        {
+          user: req.user.userId,
+          course: courseId,
+        },
+        {
+          $push: {
+            lessons: {
+              lessonId: lessonId,
+              completed: false,
+              score: 0,
+              note: note,
+            },
+          },
+        }
+      );
+
+      res.status(StatusCodes.CREATED).json({
+        success: true,
+      });
+    }
+  } else {
+    //create
+    const created = await new CompletedTest({
+      user: req.user.userId,
+      course: courseId,
+      lessons: {
+        lessonId: lessonId,
+        completed: false,
+        score: 0,
+        note: note,
+      },
+    }).save();
+
+    res.status(StatusCodes.CREATED).json({
+      success: true,
     });
   }
 };
