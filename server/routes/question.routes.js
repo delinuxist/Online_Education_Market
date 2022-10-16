@@ -6,6 +6,8 @@ const {
   doneAdding,
   completedTest,
   retakeTest,
+  getCompletedTest,
+  saveNote,
 } = require("../controllers/question.controller");
 const AuthMiddleware = require("../middlewares/auth.middleware");
 
@@ -23,8 +25,20 @@ router.post(
   addAnswers
 );
 
-router.post("/question/completedTest/:lessonId", completedTest);
+// completed Test
+router.post(
+  "/question/completedTest/:courseId/:lessonId",
+  AuthMiddleware,
+  completedTest
+);
 
+// getCompleted Test
+router.post("/question/getCompletedTest", AuthMiddleware, getCompletedTest);
+
+// retake Test
 router.get("/question/retakeTest/:lessonId", retakeTest);
+
+// save Note
+router.post("/question/saveNote/:courseId/:lessonId", AuthMiddleware, saveNote);
 
 module.exports = router;
