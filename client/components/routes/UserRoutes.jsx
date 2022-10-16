@@ -11,9 +11,9 @@ const UserRoute = ({ children }) => {
   const fetctUser = async () => {
     try {
       const { data } = await axios.get("/server/current-user");
-      setAuthenticated(data.success);
+      setAuthenticated(data?.success);
     } catch (err) {
-      toast.error(err.response.data.msg);
+      toast.error(err.response?.data?.msg);
       setAuthenticated(false);
       router.push("/login");
     }
