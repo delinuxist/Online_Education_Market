@@ -2,16 +2,31 @@ import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
+import ReactPaginate from "react-paginate";
 import ReactTyped from "react-typed";
 import CourseCard from "../components/Course/CoursesCard";
 import { Context } from "../context";
+import { COURSES } from "../context/types";
 import homeImg from "../public/assets/img/shubham-dhage-5LQ_h5cXB6U-unsplash.jpg";
 
-const Home = ({ courses }) => {
+const Home = ({ coursesList }) => {
   const router = useRouter();
+  const [currentItems, setCurrentItems] = useState(null);
+  const [pageCount, setPageCount] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
+  const itemsPerPage = 4;
+
   const {
-    state: { user },
+    state: { user, courses },
+    dispatch,
   } = useContext(Context);
+
+  useEffect(() => {
+    const endOffset = itemOffset + itemsPerPage;
+    setCurrentItems(courses?.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(courses?.length / itemsPerPage));
+  }, [itemOffset, itemsPerPage, courses]);
+
   // const [courses, setCourses] = useState([]);
   const [change, setChange] = useState(true);
 
@@ -22,11 +37,23 @@ const Home = ({ courses }) => {
   }, [router, user]);
 
   useEffect(() => {
+    dispatch({
+      type: COURSES,
+      payload: coursesList,
+    });
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setChange(!change);
     }, 100000);
     return () => clearInterval(interval);
   }, [change]);
+
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % courses?.length;
+    setItemOffset(newOffset);
+  };
 
   return (
     <div className="pt-[5rem]">
@@ -65,10 +92,27 @@ const Home = ({ courses }) => {
       </div>
       <div className="w-full h-full ">
         <div className="grid grid-cols-4 gap-5 px-5 pt-5 ">
-          {courses.map((course, index) => (
+          {currentItems?.map((course, index) => (
             <CourseCard key={index} course={course} />
           ))}
         </div>
+
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel="next >"
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={4}
+          pageCount={pageCount}
+          previousLabel="< previous"
+          renderOnZeroPageCount={null}
+          containerClassName="flex justify-center items-center mt-[3.5rem] mb-[3rem] gap-[9px]"
+          pageLinkClassName="py-[8px] px-[15px] cursor-pointer rounded-md hover:bg-teal-500 hover:text-white"
+          previousLinkClassName="py-[8px] px-[15px] cursor-pointer rounded-md hover:bg-teal-500 hover:text-white"
+          previousClassName="py-[8px] px-[15px] cursor-pointer rounded-md hover:bg-teal-500 hover:text-white border border-1 border-teal-500"
+          nextLinkClassName="py-[8px] px-[15px] cursor-pointer rounded-md hover:bg-teal-500 hover:text-white"
+          nextClassName="py-[8px] px-[15px] cursor-pointer rounded-md hover:bg-teal-500 hover:text-white border border-1 border-teal-500"
+          activeClassName="bg-teal-500 rounded-md text-white py-[8px] px-[5px]  "
+        />
       </div>
     </div>
   );
@@ -81,7 +125,7 @@ export async function getServerSideProps() {
 
   return {
     props: {
-      courses: data.courses,
+      coursesList: data.courses,
     },
   };
 }
