@@ -28,14 +28,6 @@ const questionSchema = new Schema(
     lessonId: {
       type: mongoose.Types.ObjectId,
     },
-    score: {
-      type: Number,
-      default: 0,
-    },
-    completedTest: {
-      type: Boolean,
-      default: false,
-    },
     questions: [answerSchema],
   },
   { timestamps: true }

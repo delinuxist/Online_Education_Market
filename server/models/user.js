@@ -27,10 +27,7 @@ const userSchema = new Schema(
       min: 6,
       max: 30,
     },
-    avatar: {
-      type: String,
-      default: "/avatar.png",
-    },
+    avatar: {},
     courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "course" }],
     role: {
       type: [String],

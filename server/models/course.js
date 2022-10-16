@@ -4,6 +4,21 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const { ObjectId } = mongoose.Schema;
 
+const discussionSchema = new Schema(
+  {
+    name: {
+      type: String,
+    },
+    image: {
+      type: String,
+    },
+    comment: {
+      type: String,
+    },
+  },
+  { timestamps: true }
+);
+
 const lessonSchema = new Schema(
   {
     title: {
@@ -34,6 +49,7 @@ const lessonSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    discussions: [discussionSchema],
   },
   { timestamps: true }
 );
