@@ -1,3 +1,4 @@
+import { SyncOutlined } from "@ant-design/icons";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -8,6 +9,7 @@ import Header from "../../components/Layout/Header";
 
 const InstructorIndex = () => {
   const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadCourses();
@@ -15,23 +17,31 @@ const InstructorIndex = () => {
 
   const loadCourses = async () => {
     try {
+      setLoading(true);
       const {
         data: { courses, count },
       } = await axios.get("/server/instructor-courses");
       setCourses(courses);
+      setLoading(false);
     } catch (err) {
+      setLoading(false);
       toast.error(err.response.data.msg);
     }
   };
   return (
     // <InstructorRoute>
-    <div className="w-full h-full pt-[5rem]">
+    <div className="w-full h-screen pt-[5rem]">
       <Header heading={"Courses"} />
       <div className="flex justify-center w-full h-full">
         <div className="w-[50rem] h-full mt-10">
-          {courses.length === 0 && (
-            <div className="h-full w-full flex flex-col items-center justify-center">
-              <h1 className=" font-bold text-5xl mb-8">
+          {loading ? (
+            <SyncOutlined
+              spin
+              className="flex items-center justify-center h-full text-5xl font-bold text-cyan-400"
+            />
+          ) : courses.length === 0 ? (
+            <div className="flex flex-col items-center justify-center w-full ">
+              <h1 className="mb-8 text-5xl font-bold ">
                 {" "}
                 No Courses Available...
               </h1>
@@ -41,8 +51,7 @@ const InstructorIndex = () => {
                 </a>
               </Link>
             </div>
-          )}
-          {courses.length > 0 && (
+          ) : (
             <div className="grid grid-flow-row ">
               {courses.map((course, index) => (
                 <CourseList
@@ -56,6 +65,20 @@ const InstructorIndex = () => {
               ))}
             </div>
           )}
+          {/* {courses.length > 0 && (
+            <div className="grid grid-flow-row ">
+              {courses.map((course, index) => (
+                <CourseList
+                  key={course._id}
+                  index={index}
+                  setCourses={setCourses}
+                  courses={courses}
+                  course={course}
+                  loadCourses={loadCourses}
+                />
+              ))}
+            </div>
+          )} */}
         </div>
       </div>
     </div>
