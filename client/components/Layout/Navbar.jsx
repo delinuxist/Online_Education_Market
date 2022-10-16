@@ -2,19 +2,52 @@ import Link from "next/link";
 import { Fragment, useContext } from "react";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { Context } from "../../context/index";
-import { LOGOUT } from "../../context/types";
+import { COURSES, LOGOUT } from "../../context/types";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import axios from "axios";
 import defaultProfile from "../../public/assets/img/default.png";
 import { Menu, Transition } from "@headlessui/react";
 import Image from "next/image";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useCallback } from "react";
+import { debounce } from "lodash";
 
 const Navbar = () => {
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState("");
+  const [search, setSearch] = useState("");
 
   // access state
   const { state, dispatch } = useContext(Context);
+
+  useEffect(() => {
+    setCurrentPage(window.location.pathname);
+  });
+
+  // const debounceSearchCourse = useCallback(() => {
+  //   debounce(async (search) => {}, 500);
+  // }, [dispatch]);
+
+  const searchCourses = async () => {
+    try {
+      const { data } = await axios.post("/server/user/searchCourses", {
+        search,
+      });
+
+      dispatch({
+        type: COURSES,
+        payload: data?.courses,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    searchCourses();
+  }, [search]);
 
   // destructuring user from state
   const { user } = state;
@@ -50,6 +83,21 @@ const Navbar = () => {
           </h1>
         </Link>
       </div>
+      {user && user.role && !user.role.includes["Instructor"] && (
+        <div
+          className={`w-[25rem] ${
+            currentPage === "/home" ? "blcok" : "hidden"
+          }`}
+        >
+          <input
+            type="text"
+            className="w-full rounded-xl border-white bg-[#25292A] focus:outline-none focus:bg-white focus:border-none"
+            placeholder="Search Courses ......"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      )}
       <div className="flex flex-row items-center space-x-8">
         {user && user.role && user.role.includes("Instructor") ? (
           <Link href="/instructor">
@@ -124,39 +172,43 @@ const Navbar = () => {
                   <Menu.Button>
                     <Image
                       className="rounded-full "
-                      src={defaultProfile}
+                      src={
+                        user?.avatar ? user?.avatar?.Location : defaultProfile
+                      }
                       alt="profile"
+                      layout="fill"
                     />
                   </Menu.Button>
-                  <Transition
-                    show={open}
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="absolute origin-top-right rounded-md right-0 bg-[#3A506B] h-[90px] w-[120px]">
-                      <div className="flex flex-col items-center w-full h-full py-2">
-                        {user && !user.role.includes("Instructor") && (
-                          <Link href="/user" passHref>
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  className={`w-full font-bold ${
-                                    active ? "bg-[#5BC0BE]" : "text-gray-400"
-                                  }`}
-                                >
-                                  Dashboard
-                                </button>
-                              )}
-                            </Menu.Item>
-                          </Link>
-                        )}
+                  {user !== null && !user?.role.includes("Instructor") && (
+                    <Transition
+                      show={open}
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items className="absolute origin-top-right rounded-md right-0 bg-[#3A506B] h-[70px] w-[120px]">
+                        <div className="flex flex-col items-center w-full h-full py-2">
+                          {user && !user.role.includes("Instructor") && (
+                            <Link href="/user" passHref>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    className={`w-full font-bold ${
+                                      active ? "bg-[#5BC0BE]" : "text-gray-400"
+                                    }`}
+                                  >
+                                    Dashboard
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            </Link>
+                          )}
 
-                        <Link href="/dashboard" passHref>
+                          {/* <Link href="/user/account" passHref>
                           <Menu.Item>
                             {({ active }) => (
                               <button
@@ -168,23 +220,24 @@ const Navbar = () => {
                               </button>
                             )}
                           </Menu.Item>
-                        </Link>
+                        </Link> */}
 
-                        <Menu.Item>
-                          {({ active }) => (
-                            <button
-                              onClick={logout}
-                              className={`font-bold w-full ${
-                                active ? "bg-[#5BC0BE]" : "text-gray-400"
-                              }`}
-                            >
-                              Logout
-                            </button>
-                          )}
-                        </Menu.Item>
-                      </div>
-                    </Menu.Items>
-                  </Transition>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                onClick={logout}
+                                className={`font-bold w-full ${
+                                  active ? "bg-[#5BC0BE]" : "text-gray-400"
+                                }`}
+                              >
+                                Logout
+                              </button>
+                            )}
+                          </Menu.Item>
+                        </div>
+                      </Menu.Items>
+                    </Transition>
+                  )}
                 </>
               )}
             </Menu>
