@@ -7,9 +7,9 @@ import { useRouter } from "next/router";
 // Initial State
 const initialState = {
   user: null,
-  open: false,
+  currentLesson: null,
+  courses: null,
 };
-
 // create context
 const Context = createContext();
 
@@ -50,7 +50,7 @@ const Provider = ({ children }) => {
       if (res.status === 401 && res.config && !res.config.__isRetryRequest) {
         return new Promise((resolve, reject) => {
           axios
-            .get("/api/logout")
+            .get("/server/logout")
             .then((data) => {
               // console.log("/401 error > logout");
               dispatch({ type: LOGOUT });
